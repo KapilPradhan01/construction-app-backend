@@ -33,7 +33,6 @@ const updateProgress = async (req, res) => {
         });
 
     } catch (error) {
-
         console.error("Update project progress error:", error);
 
         res.status(500).json({
