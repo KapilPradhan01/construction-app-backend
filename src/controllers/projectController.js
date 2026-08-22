@@ -133,14 +133,62 @@ const getProjects = async (req, res) => {
 
 const updateProject = async (req, res) => {
     try {
-        const project = await Project.findOne({ _id: req.params.id, createdBy: req.user.id });
-        if (!project) return res.status(404).json({ message: "Project not found or not authorized" });
-        ["name", "clientName", "clientPhone", "location", "budget", "startDate", "expectedEndDate", "progress", "status", "description"].forEach(field => {
-            if (req.body[field] !== undefined) project[field] = req.body[field];
+
+        const updateData = {};
+
+        const allowedFields = [
+            "name",
+            "clientName",
+            "clientPhone",
+            "location",
+            "budget",
+            "startDate",
+            "expectedEndDate",
+            "progress",
+            "status",
+            "description"
+        ];
+
+        allowedFields.forEach((field) => {
+            if (req.body[field] !== undefined) {
+                updateData[field] = req.body[field];
+            }
         });
-        await project.save();
-        res.json({ message: "Project updated successfully", project });
-    } catch (error) { res.status(500).json({ message: "Failed to update project", error: error.message }); }
+
+        const project = await Project.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                createdBy: req.user.id
+            },
+            {
+                $set: updateData
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found or not authorized"
+            });
+        }
+
+        res.json({
+            message: "Project updated successfully",
+            project
+        });
+
+    } catch (error) {
+
+        console.error("Update project error:", error);
+
+        res.status(500).json({
+            message: "Failed to update project",
+            error: error.message
+        });
+    }
 };
 
 const deleteProject = async (req, res) => {
