@@ -1,9 +1,7 @@
 const Project = require("../models/Project");
-const { requireOwnedProject } = require("../utils/projectAccess");
 
 const updateProjectProgress = async (req, res) => {
     try {
-
         const { progress, status } = req.body;
 
         const project = await Project.findOneAndUpdate(
@@ -35,7 +33,6 @@ const updateProjectProgress = async (req, res) => {
         });
 
     } catch (error) {
-
         console.error("Update project progress error:", error);
 
         res.status(500).json({
@@ -45,4 +42,6 @@ const updateProjectProgress = async (req, res) => {
     }
 };
 
-module.exports = { updateProgress };
+module.exports = {
+    updateProjectProgress
+};
