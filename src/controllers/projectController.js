@@ -20,10 +20,115 @@ const createProject = async (req, res) => {
 };
 
 const getProjects = async (req, res) => {
+
     try {
-        const projects = await Project.find({ createdBy: req.user.id }).sort({ createdAt: -1 });
-        res.json({ count: projects.length, projects });
-    } catch (error) { res.status(500).json({ message: "Failed to fetch projects", error: error.message }); }
+
+        const projects = await Project
+            .find({ createdBy: req.user.id })
+            .sort({ createdAt: -1 })
+            .lean();
+
+        const projectsWithFinancials = await Promise.all(
+
+            projects.map(async (project) => {
+
+                // =========================================
+                // TOTAL EXPENSE
+                // =========================================
+
+                const expenseData = await Expense.aggregate([
+
+                    {
+                        $match: {
+                            projectId: project._id
+                        }
+                    },
+
+                    {
+                        $group: {
+                            _id: null,
+                            total: {
+                                $sum: "$amount"
+                            }
+                        }
+                    }
+
+                ]);
+
+                const totalExpense =
+                    expenseData.length > 0
+                        ? expenseData[0].total
+                        : 0;
+
+
+                // =========================================
+                // TOTAL PAYMENT RECEIVED
+                // =========================================
+
+                const paymentData = await Payment.aggregate([
+
+                    {
+                        $match: {
+                            projectId: project._id
+                        }
+                    },
+
+                    {
+                        $group: {
+                            _id: null,
+                            totalReceived: {
+                                $sum: "$amount"
+                            }
+                        }
+                    }
+
+                ]);
+
+                const totalReceived =
+                    paymentData.length > 0
+                        ? paymentData[0].totalReceived
+                        : 0;
+
+
+                // =========================================
+                // RETURN PROJECT
+                // =========================================
+
+                return {
+
+                    ...project,
+
+                    totalExpense,
+
+                    totalReceived
+
+                };
+
+            })
+
+        );
+
+
+        res.json({
+
+            count: projectsWithFinancials.length,
+
+            projects: projectsWithFinancials
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            message: "Failed to fetch projects",
+
+            error: error.message
+
+        });
+
+    }
+
 };
 
 const updateProject = async (req, res) => {
