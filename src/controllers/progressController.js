@@ -4,6 +4,34 @@ const updateProgress = async (req, res) => {
     try {
         const { progress, status } = req.body;
 
+        // Validate progress
+        if (progress === undefined) {
+            return res.status(400).json({
+                message: "Progress is required"
+            });
+        }
+
+        // Validate status
+        const allowedStatuses = [
+            "planning",
+            "in_progress",
+            "completed",
+            "on_hold"
+        ];
+
+        if (status && !allowedStatuses.includes(status)) {
+            return res.status(400).json({
+                message: "Invalid project status"
+            });
+        }
+
+        // Validate progress range
+        if (progress < 0 || progress > 100) {
+            return res.status(400).json({
+                message: "Progress must be between 0 and 100"
+            });
+        }
+
         const project = await Project.findOneAndUpdate(
             {
                 _id: req.params.projectId,
@@ -12,7 +40,7 @@ const updateProgress = async (req, res) => {
             {
                 $set: {
                     progress: Number(progress),
-                    status: status
+                    ...(status !== undefined && { status })
                 }
             },
             {
@@ -27,13 +55,13 @@ const updateProgress = async (req, res) => {
             });
         }
 
-        res.json({
+        res.status(200).json({
             message: "Project progress updated successfully",
             project
         });
 
     } catch (error) {
-        console.error("Update project progress error:", error);
+        console.error("Update progress error:", error);
 
         res.status(500).json({
             message: "Failed to update project progress",
