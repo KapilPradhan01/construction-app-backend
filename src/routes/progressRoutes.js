@@ -1,7 +1,7 @@
 const express = require("express");
 
 const {
-    updateProjectProgress
+    updateProgress
 } = require("../controllers/progressController");
 
 const protect = require("../middleware/authMiddleware");
@@ -11,7 +11,7 @@ const router = express.Router();
 router.put(
     "/:projectId",
     protect,
-    updateProjectProgress
+    updateProgress
 );
 
 module.exports = router;

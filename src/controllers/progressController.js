@@ -1,8 +1,7 @@
 const Project = require("../models/Project");
 
-const updateProjectProgress = async (req, res) => {
+const updateProgress = async (req, res) => {
     try {
-
         const { progress, status } = req.body;
 
         const project = await Project.findOneAndUpdate(
@@ -12,7 +11,7 @@ const updateProjectProgress = async (req, res) => {
             },
             {
                 $set: {
-                    progress: progress,
+                    progress: Number(progress),
                     status: status
                 }
             },
@@ -35,10 +34,7 @@ const updateProjectProgress = async (req, res) => {
 
     } catch (error) {
 
-        console.error(
-            "Update project progress error:",
-            error
-        );
+        console.error("Update project progress error:", error);
 
         res.status(500).json({
             message: "Failed to update project progress",
@@ -48,5 +44,5 @@ const updateProjectProgress = async (req, res) => {
 };
 
 module.exports = {
-    updateProjectProgress
+    updateProgress
 };
