@@ -1,17 +1,48 @@
 const Project = require("../models/Project");
 const { requireOwnedProject } = require("../utils/projectAccess");
 
-const updateProgress = async (req, res) => {
+const updateProjectProgress = async (req, res) => {
     try {
+
         const { progress, status } = req.body;
-        if (progress !== undefined && (progress < 0 || progress > 100)) return res.status(400).json({ message: "Progress must be between 0 and 100" });
-        const project = await requireOwnedProject(req, res, req.params.projectId);
-        if (!project) return;
-        if (progress !== undefined) project.progress = progress;
-        if (status !== undefined) project.status = status;
-        await project.save();
-        res.json({ message: "Project progress updated successfully", project });
-    } catch (error) { res.status(500).json({ message: "Failed to update project progress", error: error.message }); }
+
+        const project = await Project.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                createdBy: req.user.id
+            },
+            {
+                $set: {
+                    progress: progress,
+                    status: status
+                }
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!project) {
+            return res.status(404).json({
+                message: "Project not found or not authorized"
+            });
+        }
+
+        res.json({
+            message: "Project progress updated successfully",
+            project
+        });
+
+    } catch (error) {
+
+        console.error("Update project progress error:", error);
+
+        res.status(500).json({
+            message: "Failed to update project progress",
+            error: error.message
+        });
+    }
 };
 
 module.exports = { updateProgress };
