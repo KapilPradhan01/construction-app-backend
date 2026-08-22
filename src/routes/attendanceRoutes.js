@@ -3,7 +3,9 @@ const express = require("express");
 const {
     markAttendance,
     getProjectAttendance,
-    getProjectLaborCost
+    getProjectLaborCost,
+    updateAttendance,
+    deleteAttendance
 } = require("../controllers/attendanceController");
 
 const protect = require("../middleware/authMiddleware");
@@ -22,6 +24,18 @@ router.get(
     "/project/:projectId/labor-cost",
     protect,
     getProjectLaborCost
+);
+
+router.put(
+    "/:id",
+    protect,
+    updateAttendance
+);
+
+router.delete(
+    "/:id",
+    protect,
+    deleteAttendance
 );
 
 module.exports = router;
