@@ -1,3 +1,5 @@
+const Project = require("../models/Project");
+
 const updateProgress = async (req, res) => {
     try {
 
@@ -44,4 +46,8 @@ const updateProgress = async (req, res) => {
             error: error.message
         });
     }
+};
+
+module.exports = {
+    updateProgress
 };
