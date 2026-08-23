@@ -1,6 +1,10 @@
 const Project = require("../models/Project");
 
 const updateProgress = async (req, res) => {
+    console.log("🔥 NEW updateProgress CONTROLLER IS RUNNING");
+    console.log("Project ID:", req.params.projectId);
+    console.log("Body:", req.body);
+
     try {
         const { progress, status } = req.body;
 
