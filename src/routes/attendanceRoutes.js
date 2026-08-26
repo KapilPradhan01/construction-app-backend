@@ -3,14 +3,6 @@ const express = require("express");
 const {
     markAttendance,
     getProjectAttendance,
-    getProjectLaborCost,
-    updateAttendance,
-    deleteAttendance
-} = require("../controllers/attendanceController");
-
-const {
-    markAttendance,
-    getProjectAttendance,
     updateAttendance,
     deleteAttendance,
     getProjectLaborCost,
