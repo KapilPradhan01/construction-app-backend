@@ -24,7 +24,7 @@ const taskRoutes = require("./src/routes/taskRoutes");
 const paymentRoutes = require("./src/routes/paymentRoutes");
 const notificationRoutes = require("./src/routes/notificationRoutes");
 const progressRoutes = require("./src/routes/progressRoutes");
-const advanceRoutes = require("./routes/advanceRoutes");
+const advanceRoutes = require("./src/routes/advanceRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
