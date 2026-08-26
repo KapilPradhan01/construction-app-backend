@@ -8,6 +8,15 @@ const {
     deleteAttendance
 } = require("../controllers/attendanceController");
 
+const {
+    markAttendance,
+    getProjectAttendance,
+    updateAttendance,
+    deleteAttendance,
+    getProjectLaborCost,
+    getWorkerSalaryDetails
+} = require("../controllers/attendanceController");
+
 const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -36,6 +45,14 @@ router.delete(
     "/:id",
     protect,
     deleteAttendance
+);
+
+// Get individual worker salary details
+
+router.get(
+    "/project/:projectId/worker/:workerId/salary",
+    protect,
+    getWorkerSalaryDetails
 );
 
 module.exports = router;

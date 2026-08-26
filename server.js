@@ -24,6 +24,7 @@ const taskRoutes = require("./src/routes/taskRoutes");
 const paymentRoutes = require("./src/routes/paymentRoutes");
 const notificationRoutes = require("./src/routes/notificationRoutes");
 const progressRoutes = require("./src/routes/progressRoutes");
+const advanceRoutes = require("./routes/advanceRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
@@ -38,6 +39,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/progress", progressRoutes);
+app.use("/api/advances", advanceRoutes);
 
 connectDB();
 
