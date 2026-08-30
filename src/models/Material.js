@@ -34,6 +34,47 @@ const materialSchema = new mongoose.Schema(
             type: String
         },
 
+        // ================================
+        // PAYMENT DETAILS
+        // ================================
+
+        paymentStatus: {
+            type: String,
+            enum: ["paid", "pending"],
+            default: "pending"
+        },
+
+        remainingAmount: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+
+        paymentMethod: {
+            type: String,
+            enum: ["cash", "upi", "bank", "other"],
+            default: "cash"
+        },
+
+        paymentDate: {
+            type: String,
+            default: ""
+        },
+
+        // ================================
+        // OTHER DETAILS
+        // ================================
+
+        date: {
+            type: String,
+            default: ""
+        },
+
+        description: {
+            type: String,
+            default: ""
+        },
+
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

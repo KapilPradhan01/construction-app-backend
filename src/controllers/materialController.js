@@ -3,9 +3,38 @@ const { requireOwnedProject } = require("../utils/projectAccess");
 
 const createMaterial = async (req, res) => {
     try {
-        const { projectId, name, quantity, unit, price, supplier } = req.body;
+        const {
+            projectId,
+            name,
+            quantity,
+            unit,
+            price,
+            supplier,
+            paymentStatus,
+            remainingAmount,
+            paymentMethod,
+            paymentDate,
+            date,
+            description
+        } = req.body;
         if (!await requireOwnedProject(req, res, projectId)) return;
-        const material = await Material.create({ projectId, name, quantity, unit, price, supplier, createdBy: req.user.id });
+        const material = await Material.create({
+            projectId,
+            name,
+            quantity,
+            unit,
+            price,
+            supplier,
+        
+            paymentStatus,
+            remainingAmount,
+            paymentMethod,
+            paymentDate,
+            date,
+            description,
+        
+            createdBy: req.user.id
+        });
         res.status(201).json({ message: "Material created successfully", material });
     } catch (error) { res.status(500).json({ message: "Failed to create material", error: error.message }); }
 };
@@ -19,16 +48,77 @@ const getProjectMaterials = async (req, res) => {
 };
 
 const updateMaterial = async (req, res) => {
+
     try {
-        const material = await Material.findById(req.params.id);
-        if (!material) return res.status(404).json({ message: "Material not found" });
-        if (!await requireOwnedProject(req, res, material.projectId)) return;
-        ["name", "quantity", "unit", "price", "supplier"].forEach(field => {
-            if (req.body[field] !== undefined) material[field] = req.body[field];
+
+        const material =
+            await Material.findById(req.params.id);
+
+        if (!material) {
+            return res.status(404).json({
+                message: "Material not found"
+            });
+        }
+
+        if (
+            !await requireOwnedProject(
+                req,
+                res,
+                material.projectId
+            )
+        ) return;
+
+
+        // ================================
+        // UPDATE MATERIAL FIELDS
+        // ================================
+
+        [
+            "name",
+            "quantity",
+            "unit",
+            "price",
+            "supplier",
+            "paymentStatus",
+            "remainingAmount",
+            "paymentMethod",
+            "paymentDate",
+            "date",
+            "description"
+        ].forEach(field => {
+
+            if (req.body[field] !== undefined) {
+                material[field] = req.body[field];
+            }
+
         });
+
+
         await material.save();
-        res.json({ message: "Material updated successfully", material });
-    } catch (error) { res.status(500).json({ message: "Failed to update material", error: error.message }); }
+
+
+        res.json({
+
+            message:
+                "Material updated successfully",
+
+            material
+
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+
+            message:
+                "Failed to update material",
+
+            error:
+                error.message
+
+        });
+
+    }
 };
 
 const deleteMaterial = async (req, res) => {
